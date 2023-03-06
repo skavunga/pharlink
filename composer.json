@@ -1,0 +1,20 @@
+{
+    "name": "skavunga/pharlink",
+    "description": "Faire un lien avec chaque fichier dans l'archive phar dans le fichier php classic pour cacher son code",
+    "type": "project",
+    "require": {
+        "cakephp/filesystem": "^4.4"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Skavunga\\Pharlink\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Souvenance",
+            "email": "skavunga@gmail.com"
+        }
+    ]
+}
