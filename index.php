@@ -19,7 +19,5 @@ $pharlink = "clinique_soft.phar";
 
 $scanner = Scanner::init($paths, $pharlink);
 
-$scanner::fileAndDirectory();
-
 
 Debugger::show($scanner::getFiles());

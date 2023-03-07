@@ -25,7 +25,7 @@ class Scanner
 	public static function init($from = null, $link = null): Scanner
 	{
 		if (self::$instance === null) {
-			return new Scanner($from, $link);
+			self::$instance = new Scanner($from, $link);
 		}
 		return self::$instance;
 	}
@@ -53,7 +53,7 @@ class Scanner
 		return null;
 	}
 
-	private static function get_hash($text)
+	private static function get_hash($text): string
 	{
 		return sha1($text);
 	}
@@ -63,8 +63,13 @@ class Scanner
 	 */
 	private static function scan():int
 	{
+		$files = [];
 		foreach (self::$scanFrom as $key => $from) 
-			self::$files = array_merge(self::$files, self::findRecursive($from));
+			$files = array_merge($files, self::findRecursive($from));
+
+		foreach ($files as $file)
+			self::$files[] = new Filename($file);
+
 		return count(self::$files);
 	}
 
@@ -119,7 +124,7 @@ class Scanner
     	return preg_match('/' . self::$pattern . '$/i', $file);
     }
 
-	private static function getFoldersPath()
+	private static function getFoldersPath(): array
 	{
 		$paths = [];
 		foreach (self::$scanFrom as $folder) {
@@ -132,22 +137,14 @@ class Scanner
 	/**
 	 * List des fichiers
 	 */
-	public static function getFiles()
+	public static function getFiles(): array
 	{
 		return self::$files;
 	}
 
-	public static function fileAndDirectory()
+	public static function writeAll()
 	{
-		$contents = [];
-		foreach (self::$files as $filename) {
-			$name = explode('\\', $filename);
-
-			$file = $name[count($name) - 1];
-
-			Debugger::show($file);
-		}
-			die();
+		// code...
 	}
 
 }
