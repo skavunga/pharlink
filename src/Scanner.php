@@ -2,7 +2,10 @@
 
 namespace Skavunga\Pharlink;
 
-use Cake\Filesystem\Folder;
+use Cake\Filesystem\{
+	Folder,
+	File
+};
 
 /**
  * Scanner les dossiers
@@ -14,20 +17,27 @@ class Scanner
 	private static $scanFrom = [];
 	private static $files    = [];
 	private static $instance = null;
+	private static $root = null;
 
-	public function __construct($scanFrom = null, $pharlink = null)
+	public function __construct($scanFrom = null, $pharlink = null, $root = null)
 	{
-		self::setScanFrom($scanFrom);
+		self::setRoot($root);
 		self::setPharlink($pharlink);
+		self::setScanFrom($scanFrom);
 		self::scan();
 	}
 
-	public static function init($from = null, $link = null): Scanner
+	public static function init($from = null, $link = null, $root = null): Scanner
 	{
 		if (self::$instance === null) {
-			self::$instance = new Scanner($from, $link);
+			self::$instance = new Scanner($from, $link, $root);
 		}
 		return self::$instance;
+	}
+
+	public static function setRoot($value)
+	{
+		return self::$root = $value;
 	}
 
 	public static function setPharlink($value)
@@ -44,10 +54,14 @@ class Scanner
 			return self::$scanFrom;
 		}
 
-		$value = new Folder($value);
+		$_value = new Folder($value);
 
-		if (!empty($value->pwd())) {
-			return self::$scanFrom[self::get_hash($value->pwd())] = $value;
+		if (!$_value->pwd()) {
+			$_value = new Folder(rtrim(self::$root, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . trim($value, DIRECTORY_SEPARATOR));
+		}
+
+		if (!empty($_value->pwd())) {
+			return self::$scanFrom[self::get_hash($_value->pwd())] = $_value;
 		}
 
 		return null;
@@ -142,9 +156,37 @@ class Scanner
 		return self::$files;
 	}
 
-	public static function writeAll()
+	/**
+	 * Re-ecrire tous les fichiers
+	 */
+	public static function rewriteAll()
 	{
-		// code...
+		$increment = 0;
+		foreach (self::getFiles() as $file) {
+			$replacement = str_replace(self::$root, self::$pharlink, $file->pwd());
+			$replacement = trim(self::$root, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $replacement;
+
+			if(Writter::putContents($file, $replacement)) {
+				$increment++;
+			}
+		}		
+
+		return $increment;
+	}
+
+	public static function reverseRewrite()
+	{
+		$increment = 0;
+		foreach (self::getFiles() as $file) {
+			$replacement = str_replace(self::$root, self::$pharlink, $file->pwd());
+			$replacement = trim(self::$root, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $replacement;
+
+			if(Writter::restoreContent($file)) {
+				$increment++;
+			}
+		}		
+
+		return $increment;
 	}
 
 }

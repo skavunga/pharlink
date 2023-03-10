@@ -5,4 +5,6 @@ De ton côté, tu ne veux pas non plus mettre ton application écris en PHP dans
 
 Ceci est la partie de la solution: La grande solution est d'utiliser [box]: https://github.com/box-project/box L'autre probleme qui se pose est que ton application sera compacté dans une archive et compressé, mais que l'accès ne sera pas possible depuis un navigateur.
 
-C'est là qu'entre en jeux ce petit library. Qui va remplacer les fichiers par leurs équivalents compressé pour que les deux parties sortent gagnant (client et développeur)
+C'est là qu'entre en jeux ce petit library. Qui va remplacer les fichiers par leurs équivalents compressé pour que les deux parties sortent gagnant (client et développeur).
+
+# Utilisation

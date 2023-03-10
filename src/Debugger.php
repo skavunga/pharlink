@@ -18,4 +18,9 @@ class Debugger
         print_r($var);
         echo '</pre>';
 	}
+
+    public static function info($text)
+    {
+        echo($text); // self::show($text, false, false);
+    }
 }
