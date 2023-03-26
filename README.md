@@ -7,4 +7,31 @@ Ceci est la partie de la solution: La grande solution est d'utiliser [box]: http
 
 C'est là qu'entre en jeux ce petit library. Qui va remplacer les fichiers par leurs équivalents compressé pour que les deux parties sortent gagnant (client et développeur).
 
-# Utilisation
+# Exemple d'utilisation PHP
+Creer un fichier a la racine, et inserer le code ci-dessous dedans
+```
+require 'vendor/autoload.php';
+
+use Skavunga\Pharlink\{
+	Scanner,
+	Debugger
+};
+
+$paths = [
+	"pathToScan",
+	"otherPath"
+];
+
+$pharlink = "nomDuFichierDeSortie.phar";
+$root = '/chemin/complet/du/dossier/du/projet/';
+
+// Initialisation du Scanner
+$scanner = Scanner::init($paths, $pharlink, $root);
+
+// Ecriture des fichiers
+$files_copied = $scanner::rewriteAll();
+
+// Nombre des fichiers copiés
+Debugger::info($files_copied . "fichiers copiés");
+```
+Vous pouvez l'executer en console `php fichier_creer.php`

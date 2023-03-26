@@ -16,11 +16,11 @@ class Debugger
         }
         echo "\n<pre" . ($showHtml ? ' style="color: #000; background: #FFF; font: 9pt \'Courier New\', Courier, monospace; padding: 10px;"' : '') . '>';
         print_r($var);
-        echo '</pre>';
+        echo '</pre>' . "\n";
 	}
 
     public static function info($text)
     {
-        echo($text); // self::show($text, false, false);
+        self::show($text, false, false);
     }
 }

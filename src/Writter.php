@@ -9,6 +9,7 @@ class Writter
 {
 	private static $instance = null;
 	private static $oldFilePreffix = 'old_';
+	private static $outputDir = 'output';
 
 	private static $includeWithReturn = [
 		'routes.php',
@@ -16,6 +17,11 @@ class Writter
 		'app.php',
 		'free_content.php'
 	];
+
+	public static function setIncludeWithReturn(array $files): array
+	{
+		return array_merge(self::$includeWithReturn, $files);
+	}
 
 	public static function getInstance()
 	{
@@ -27,53 +33,32 @@ class Writter
 
 	private static function get_head()
 	{
-		return "
-		<?php
-		/**
-		 * Copyright (c) 2023 - Skatek Corporation <skatekcorporation@gmail.com>
-		 * @author Souvenance Kavunga <skavunga@gmail.com>
-		 */
-
-		";
+		return '<?php
+/**
+ * Copyright (c) 2023 - Skatek Corporation <skatekcorporation@gmail.com>
+ * @author Souvenance Kavunga <skavunga@gmail.com>
+ */
+';
 	}
 
-	public static function putContents(Filename $file, $data, $showInfo = true)
+	public static function putContents($root, Filename $file, $data, $showInfo = true)
 	{
 		if (in_array($file->name, self::$includeWithReturn)) {
-			$content = self::get_head() . "return include 'phar://{$data}';";
+			$content = self::get_head() . "return include 'phar://' . ROOT . '/{$data}';";
 		} else {
-			$content = self::get_head() . "include 'phar://{$data}';";
+			$content = self::get_head() . "include 'phar://' . ROOT . '/{$data}';";
 		}
 
-		$newName = $file->Folder->pwd() . DIRECTORY_SEPARATOR . self::$oldFilePreffix . $file->name;
+		$output = dirname(__DIR__) . DIRECTORY_SEPARATOR . self::$outputDir . str_replace($root, '', $file->path);
 
-		if ($file->copy($newName)) {
-			if ($showInfo) {
-				Debugger::info($file->pwd() . " copié vers " . $newName);
-			}
-		}
+		$newFile = new Filename($output, true);
 
-		if($file->write($content, 'w', true)) {
+		if($newFile->write($content, 'w', true)) {
 			if ($showInfo) {
-				Debugger::info("Fichier ecris: " . $file->pwd());
+				Debugger::info("Fichier ecris: " . $newFile->pwd());
 			}
 
 			return true;
-		}
-
-		return false;
-	}
-
-	public static function restoreContent(Filename $file, $showInfo = true)
-	{
-		$oldFile = new Filename($file->Folder->pwd() . DIRECTORY_SEPARATOR . self::$oldFilePreffix . $file->name);
-
-		if ($oldFile->copy($file->pwd())) {
-			if ($showInfo) {
-				Debugger::info($oldFile->pwd() . " copié vers " . $file->pwd());
-			}
-
-			return $oldFile->delete();
 		}
 
 		return false;

@@ -54,11 +54,7 @@ class Scanner
 			return self::$scanFrom;
 		}
 
-		$_value = new Folder($value);
-
-		if (!$_value->pwd()) {
-			$_value = new Folder(rtrim(self::$root, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . trim($value, DIRECTORY_SEPARATOR));
-		}
+		$_value = new Folder(rtrim(self::$root, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . trim($value, DIRECTORY_SEPARATOR));
 
 		if (!empty($_value->pwd())) {
 			return self::$scanFrom[self::get_hash($_value->pwd())] = $_value;
@@ -162,30 +158,17 @@ class Scanner
 	public static function rewriteAll()
 	{
 		$increment = 0;
+		echo "\n";
 		foreach (self::getFiles() as $file) {
 			$replacement = str_replace(self::$root, self::$pharlink, $file->pwd());
-			$replacement = trim(self::$root, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $replacement;
 
-			if(Writter::putContents($file, $replacement)) {
+
+			if(Writter::putContents(self::$root, $file, $replacement)) {
+				Debugger::info($file->pwd());
 				$increment++;
 			}
 		}		
-
-		return $increment;
-	}
-
-	public static function reverseRewrite()
-	{
-		$increment = 0;
-		foreach (self::getFiles() as $file) {
-			$replacement = str_replace(self::$root, self::$pharlink, $file->pwd());
-			$replacement = trim(self::$root, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $replacement;
-
-			if(Writter::restoreContent($file)) {
-				$increment++;
-			}
-		}		
-
+		echo "\n";
 		return $increment;
 	}
 
